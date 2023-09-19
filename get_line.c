@@ -16,7 +16,7 @@ int input_len = 0;
 
 while (1)
 {
-if (but_pos >= buf_size)
+if (buf_pos >= buf_size)
 {
 buf_size = read(STDIN_FILENO, buffer, BUFFER_SIZE);
 buf_pos = 0;
