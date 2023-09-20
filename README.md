@@ -1,1 +1,1 @@
-0x16. C - Simple Shell Project done by Daniel Kuboi and Benjamin Mwangi
+Simple_shell poject by Benjamin Mwangi and Daniel Kuboi
