@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
-*shell-exit - function that exits shell
+*shell_exit - function that exits shell
 *@args: argument
 *
 *Return: nothing
