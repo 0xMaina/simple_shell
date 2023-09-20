@@ -1,40 +1,43 @@
-#include "shell.h"
+#include "main.h"
 
 /**
- * main - implements a simple shell
- *
- * Return: EXIT_SUCCESS.
+ * main - Entry point. Simple Shell Project
+ * @argc: args count
+ * @argv: args array
+ * @envp: env array
+ * Return: 0 (success)
  */
-int main(void)
+
+int main(int argc, char **argv, char **envp)
 {
-	char *input;
-	char **args;
-	int status;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t res = 0;
 
-	/* Register signal handlers */
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
-	signal(SIGTSTP, handle_sigstp);
+	(void) argc;
 
-	do {
-		input = get_input();
-		if (!input || !*input)/* EOF detected, exit the loop */
-			break;
+	while (1)
+	{
+		_puts("$ ");
+		res = getline(&line, &len, stdin);
 
-		args = tokenize_input(input);
-		if (!args || !*args)
+		if (res == -1)
 		{
-			free(input);
-			free_tokens(args);
+			break;
+		}
+
+		if (line[res - 1] == '\n')
+			line[res - 1] = '\0';
+
+		if ((_strcmp(line, "env")) == 0 || (_strcmp(line, "printenv")) == 0)
+		{
+			_printenv(envp);
 			continue;
 		}
-		status = execute(args);
-		free(input);
-		free_tokens(args);
-
-		/* Set status to 1 to continue the loop */
-		status = 1;
-	} while (status);
-
-	return (EXIT_SUCCESS);
+		if (line[0] == 'e' && line[1] == 'x' && line[2] == 'i' && line[3] == 't')
+			break;
+		exec_command(line, argv[0], envp);
+	}
+	free(line);
+	return (0);
 }
