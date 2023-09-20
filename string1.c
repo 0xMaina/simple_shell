@@ -1,107 +1,87 @@
 #include "shell.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#define WRITE_BUF_SIZE 1024
-#define BUF_FLUSH '\0'
 
 /**
- * _strcpy - Copy one string to another.
- * @dest: The destination string.
- * @src: The source string.
+ * _strcpy - copies a string
+ * @dest: the destination
+ * @src: the source
  *
- * Return: A pointer to the destination string.
+ * Return: pointer to destination
  */
-char *_strcpy(char *dest, const char *src)
+char *_strcpy(char *dest, char *src)
 {
 	int i = 0;
 
-	/* Check if destination is same as source or if the source is NULL. */
-	if (dest == src || src == NULL)
+	if (dest == src || src == 0)
 		return (dest);
-
-	/* Copy the characters from the source to the destination. */
 	while (src[i])
 	{
 		dest[i] = src[i];
 		i++;
 	}
-	dest[i] = '\0';
+	dest[i] = 0;
 	return (dest);
 }
 
 /**
- * _strdup - Duplicate a string.
- * @str: The string to be duplicated.
+ * _strdup - duplicates a string
+ * @str: the string to duplicate
  *
- * Return: A pointer to the duplicated string.
+ * Return: pointer to the duplicated string
  */
 char *_strdup(const char *str)
 {
 	int length = 0;
 	char *ret;
 
-	/* Check if the input string is NULL. */
 	if (str == NULL)
 		return (NULL);
-
-	/* Calculate the length of the input string. */
-	while (str[length])
+	while (*str++)
 		length++;
-
-	/* Allocate memory for the duplicated string. */
 	ret = malloc(sizeof(char) * (length + 1));
-
-	/* Check if memory allocation was successful. */
 	if (!ret)
 		return (NULL);
-
-	/* Copy characters from the input string to the duplicated string. */
-	for (int i = 0; i <= length; i++)
-		ret[i] = str[i];
-
+	for (length++; length--;)
+		ret[length] = *--str;
 	return (ret);
 }
 
 /**
- * _puts - Print a string to standard output.
- * @str: The string to be printed.
+ *_puts - prints an input string
+ *@str: the string to be printed
  *
- * No Return value
+ * Return: Nothing
  */
-void _puts(const char *str)
+void _puts(char *str)
 {
-	/* Check if the input string is NULL. */
-	if (str == NULL)
-		return;
+	int i = 0;
 
-	/* Print each character of the input string to standard output. */
-	for (int i = 0; str[i] != '\0'; i++)
+	if (!str)
+		return;
+	while (str[i] != '\0')
+	{
 		_putchar(str[i]);
+		i++;
+	}
 }
 
 /**
- * _putchar - Write a character to standard output.
- * @c: The character to be printed.
+ * _putchar - writes the character c to stdout
+ * @c: The character to print
  *
- * Return: 1 on success, -1 on error (with errno set appropriately).
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
  */
 int _putchar(char c)
 {
 	static int i;
 	static char buf[WRITE_BUF_SIZE];
 
-	/* Check if it's time to flush the buffer or if the buffer is full. */
 	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
 	{
 		write(1, buf, i);
 		i = 0;
 	}
-
-	/* Store the character in the buffer unless it's a flush character. */
 	if (c != BUF_FLUSH)
 		buf[i++] = c;
-
 	return (1);
 }

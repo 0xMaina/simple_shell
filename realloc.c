@@ -1,67 +1,86 @@
 #include "shell.h"
 
 /**
- * _memset - it fills the memory with a constant byte
- * @s: points to the memory area
- * @b: byte to fill *s with
- * @n: amount of bytes to be filled
+ * is_cmd - determines if a file is an executable command
+ * @info: the info struct
+ * @path: path to the file
  *
- * Return: (s) a pointer to the memory area s
+ * Return: 1 if true, 0 otherwise
  */
-char *_memset(char *s, char b, unsigned int n)
+int is_cmd(info_t *info, char *path)
 {
-	unsigned int i;
+	struct stat st;
 
-	for (i = 0; i < n; i++)
-		s[i] = b;
+	(void)info;
+	if (!path || stat(path, &st))
+		return (0);
 
-	return (s);
+	if (st.st_mode & S_IFREG)
+	{
+		return (1);
+	}
+	return (0);
 }
+
 /**
- * ffree - frees stringed strings
- * @pp: stringed strings
- */
-void ffree(char **pp)
-{
-	char **a = pp;
-
-	if (!pp)
-		return;
-
-	while (*pp)
-		free(*pp++);
-
-	free(a);
-}
-/**
- * _realloc - reallocates a memory block
- * @ptr: point to previous malloc'ated block
- * @old_size: the byte size of the previous block
- * @new_size: the byte size of a new block
+ * dup_chars - duplicates characters
+ * @pathstr: the PATH string
+ * @start: starting index
+ * @stop: stopping index
  *
- * Return: points to da ol'block nameen.
+ * Return: pointer to new buffer
  */
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
+char *dup_chars(char *pathstr, int start, int stop)
 {
-	char *p;
+	static char buf[1024];
+	int i = 0, k = 0;
 
-	if (!ptr)
-		return (malloc(new_size));
+	for (k = 0, i = start; i < stop; i++)
+		if (pathstr[i] != ':')
+			buf[k++] = pathstr[i];
+	buf[k] = 0;
+	return (buf);
+}
 
-	if (!new_size)
-		return (free(ptr), NULL);
+/**
+ * find_path - finds this cmd in the PATH string
+ * @info: the info struct
+ * @pathstr: the PATH string
+ * @cmd: the cmd to find
+ *
+ * Return: full path of cmd if found or NULL
+ */
+char *find_path(info_t *info, char *pathstr, char *cmd)
+{
+	int i = 0, curr_pos = 0;
+	char *path;
 
-	if (new_size == old_size)
-		return (ptr);
-
-	p = malloc(new_size);
-	if (!p)
+	if (!pathstr)
 		return (NULL);
-
-	old_size = old_size < new_size ? old_size : new_size;
-	while (old_size--)
-	p[old_size] = ((char *)ptr)[old_size];
-
-	free(ptr);
-	return (p);
+	if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
+	{
+		if (is_cmd(info, cmd))
+			return (cmd);
+	}
+	while (1)
+	{
+		if (!pathstr[i] || pathstr[i] == ':')
+		{
+			path = dup_chars(pathstr, curr_pos, i);
+			if (!*path)
+				_strcat(path, cmd);
+			else
+			{
+				_strcat(path, "/");
+				_strcat(path, cmd);
+			}
+			if (is_cmd(info, path))
+				return (path);
+			if (!pathstr[i])
+				break;
+			curr_pos = i;
+		}
+		i++;
+	}
+	return (NULL);
 }
