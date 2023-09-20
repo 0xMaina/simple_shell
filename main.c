@@ -1,43 +1,38 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * main - Entry point. Simple Shell Project
- * @argc: args count
- * @argv: args array
- * @envp: env array
- * Return: 0 (success)
+ * main - Entry point of the simple shell program.
+ *
+ * @ac: The number of command-line arguments.
+ * @av: An array of strings representing the command-line arguments.
+ * @env: An array of strings representing the environment variable
+ *
+ * Return: Always returns 0.
  */
-
-int main(int argc, char **argv, char **envp)
+int main(int ac, char **av, char **env)
 {
-	char *line = NULL;
-	size_t len = 0;
-	ssize_t res = 0;
+	char *str = NULL, **arr = NULL;
 
-	(void) argc;
-
-	while (1)
+	while (ac < 2)
 	{
-		_puts("$ ");
-		res = getline(&line, &len, stdin);
+		promp();
 
-		if (res == -1)
+		str = command_line();
+
+		if (no_line(str) == 1)
 		{
-			break;
-		}
-
-		if (line[res - 1] == '\n')
-			line[res - 1] = '\0';
-
-		if ((_strcmp(line, "env")) == 0 || (_strcmp(line, "printenv")) == 0)
-		{
-			_printenv(envp);
+			free(str);
 			continue;
 		}
-		if (line[0] == 'e' && line[1] == 'x' && line[2] == 'i' && line[3] == 't')
-			break;
-		exec_command(line, argv[0], envp);
+
+		arr = separate(str);
+
+		if (check(arr, env) == 1)
+		{
+			continue;
+		}
+
+		execute(arr, av[0], env);
 	}
-	free(line);
 	return (0);
 }
