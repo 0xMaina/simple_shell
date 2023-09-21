@@ -1,12 +1,26 @@
 #include "shell.h"
 
 /**
- * promp - prompt "$" to the user
+ * compare- compare between 's' and 'c'
+ *
+ * @s: string
+ * @c: string
+ *
+ * Return: 0 if they have the same char
+ * and -1 if not
  */
-void promp(void)
+int compare(const char *s, const char *c)
 {
-	if (isatty(STDIN_FILENO) == 1)
+	int i = 0;
+
+	while (s[i] && c[i])
 	{
-		write(STDOUT_FILENO, "$ ", 2);
+		if (s[i] != c[i])
+		{
+			return (s[i] - c[i]);
+		}
+		i++;
 	}
+
+	return (0);
 }
