@@ -5,10 +5,10 @@
  *
  * @string: string
  * @env: environment
- *
+ * @ex: exit
  * Return: 1 if env match or 0 if not
  */
-int check(char **string, char **env)
+int check(char **string, char **env, int ex)
 {
 	unsigned int i = 0, len = 0;
 
@@ -39,7 +39,7 @@ int check(char **string, char **env)
 			free(string[i]);
 		}
 		free(string);
-		exit(2);
+		exit(ex);
 	}
 	return (0);
 }

@@ -11,13 +11,14 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char *str = NULL, **arr = NULL;
+	char *str = NULL, **arr = NULL, *re = NULL;
+	static int ex;
 
 	while (ac < 2)
 	{
 		promp();
 
-		str = command_line();
+		str = command_line(ex);
 
 		if (no_line(str) == 1)
 		{
@@ -27,12 +28,14 @@ int main(int ac, char **av, char **env)
 
 		arr = separate(str);
 
-		if (check(arr, env) == 1)
+		re = path(arr);
+
+		if (check(arr, env, ex) == 1)
 		{
 			continue;
 		}
 
-		execute(arr, av[0], env);
+		ex = execute(arr, av[0], env, re);
 	}
 	return (0);
 }

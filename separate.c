@@ -83,7 +83,10 @@ char **separate(char *string)
 		mv = strtok(NULL, " \t\n");
 		i++;
 	}
+
 	arr[i] = NULL;
+
 	free(string);
+
 	return (arr);
 }
